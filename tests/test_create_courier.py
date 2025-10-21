@@ -8,23 +8,21 @@ from datasets import *
 class TestCreateCourier:
 
     @allure.title('Создание нового курьера')
-    def test_create_new_courier_success(self, create_courier, courier_login, delete_courier):
+    def test_create_new_courier_success(self, create_courier, delete_courier, get_courier_id):
 
         response = create_courier["response"]
         assert response.status_code == 201
         assert response.json() == {"ok": True}
-        courier_id = courier_login["courier_id"]
-        delete_courier(courier_id)
+        delete_courier(get_courier_id)
 
     @allure.title('Создание курьера с таким же логином невозможно')
-    def test_create_existing_courier_fails(self, create_courier, courier_login, delete_courier):
+    def test_create_existing_courier_fails(self, create_courier, delete_courier, get_courier_id):
 
         payload = new_courier_credentials
         response = requests.post(f'{BASE_URL}/courier', data=payload)
         assert response.status_code == 409
         assert "Этот логин уже используется" in response.json()["message"]
-        courier_id = courier_login["courier_id"]
-        delete_courier(courier_id)
+        delete_courier(get_courier_id)
 
     @allure.title('Невозможно создать курьера без обязательных полей')
     @pytest.mark.parametrize('empty_field', empty_required_field)
