@@ -3,6 +3,7 @@ import pytest
 import allure
 from urls import BASE_URL
 from datasets import *
+from message import *
 
 
 class TestCreateCourier:
@@ -21,7 +22,7 @@ class TestCreateCourier:
         payload = new_courier_credentials
         response = requests.post(f'{BASE_URL}/courier', data=payload)
         assert response.status_code == 409
-        assert "Этот логин уже используется" in response.json()["message"]
+        assert ERROR_DUPLICATE_LOGIN in response.json()["message"]
         delete_courier(get_courier_id)
 
     @allure.title('Невозможно создать курьера без обязательных полей')
@@ -31,4 +32,4 @@ class TestCreateCourier:
         payload = empty_field
         response = requests.post(f'{BASE_URL}/courier', data=payload)
         assert response.status_code == 400
-        assert "Недостаточно данных" in response.json()["message"]
+        assert ERROR_INSUFFICIENT_DATA in response.json()["message"]

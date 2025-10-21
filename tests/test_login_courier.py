@@ -3,6 +3,7 @@ import pytest
 import allure
 from datasets import *
 from urls import BASE_URL
+from message import *
 
 class TestLoginCourier:
 
@@ -22,7 +23,7 @@ class TestLoginCourier:
         payload = not_exist_courier_credentials
         response = requests.post(f'{BASE_URL}/courier/login', data=payload)
         assert response.status_code == 404
-        assert "Учетная запись не найдена" in response.json()["message"]
+        assert ERROR_ACCOUNT_NOT_FOUND in response.json()["message"]
 
     @allure.title('Тест авторизации с неверным паролем')
     def test_authorization_wrong_password_error(self, create_courier, delete_courier, get_courier_id):
@@ -30,7 +31,7 @@ class TestLoginCourier:
         payload = incorrect_auth_credentials
         response = requests.post(f'{BASE_URL}/courier/login', data=payload)
         assert response.status_code == 404
-        assert "Учетная запись не найдена" in response.json()["message"]  
+        assert ERROR_ACCOUNT_NOT_FOUND in response.json()["message"]  
         delete_courier(get_courier_id)
 
 
@@ -41,5 +42,5 @@ class TestLoginCourier:
         payload = empty_params_for_login
         response = requests.post(f'{BASE_URL}/courier/login', data=payload)
         assert response.status_code == 400
-        assert "Недостаточно данных для входа" in response.json()["message"]     
+        assert ERROR_INSUFFICIENT_LOGIN_DATA in response.json()["message"]     
         delete_courier(get_courier_id)
